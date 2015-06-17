@@ -1,0 +1,58 @@
+Platform ibm
+--------------------
+Version string:
+===
+dataserver===>
+Adaptive Server Enterprise/15.0.3/EBF 24170 ESD#4.5/P/RS6000/AIX 5.3/ase1503/2861/64-bit/FBO/Thu May  7 02:05:26 2015
+
+backupserver===>
+Backup Server/15.0.3/EBF 24170 ESD#4.5/RS6000/AIX 5.3/ase1503/3309/32-bit/OPT/Tue May  5 00:45:07 2015
+
+charset===>
+Charset/15.0.3/EBF 24170 ESD#4.5/P/RS6000/AIX 5.3/ase1503/2861/64-bit/OPT/Thu May  7 01:08:14 2015
+
+langinstall===>
+Langinstall/15.0.3/EBF 24170 ESD#4.5/P/RS6000/AIX 5.3/ase1503/2861/64-bit/OPT/Thu May  7 01:08:14 2015
+
+sqlupgraderes===>
+sqlupgrade/15.0.3 ESD #4.5/32bit/P/RS6000/AIX 5.3/EBF 24170/OPT/Sun May 10 20:03:45 PDT 2015
+
+srvbuildres===>
+srvbuild/15.0.3 ESD #4.5/P/RS6000/AIX 5.3/EBF 24170/OPT/Sun May 10 20:03:27 PDT 2015
+
+sybmigrate===>
+SybMigrate/15.0.3/24161/P/Sun_svr4/OS 5.8 /ase1503/ENG/32-bit/OPT/Wed May  6 23:51:18 PDT 2015
+
+
+sybmultbufe===>
+Multibuffering Emulator/15.0.3/EBF 24170 ESD#4.5/RS6000/AIX 5.3/ase1503/3309/32-bit/OPT/Tue May  5 00:45:07 2015
+
+xpserver===>
+XP Server/15.0.3/EBF 24170 ESD#4.5/P/RS6000/AIX 5.3/ase1503/2861/64-bit/OPT/Thu May  7 01:08:14 2015
+
+diagbs===>
+Backup Server/15.0.3/EBF 24170 ESD#4.5/RS6000/AIX 5.3/ase1503/3309/32-bit/DEBUG/Tue May  5 00:47:06 2015
+
+diagjsag===>
+JS Agent/15.0.3/EBF 24170 ESD#4.5/P/RS6000/AIX 5.3/ase1503/2861/64-bit/DEBUG/Thu May  7 01:50:24 2015
+
+diagoptd===>
+OptDiag/15.0.3/EBF 24170 ESD#4.5/P/RS6000/AIX 5.3/ase1503/2861/64-bit/DEBUG/Thu May  7 01:50:24 2015
+
+diagserver===>
+Adaptive Server Enterprise/15.0.3/EBF 24170 ESD#4.5/P/RS6000/AIX 5.3/ase1503/2861/64-bit/DEBUG/Thu May  7 01:23:50 2015
+
+diagsmb===>
+Multibuffering Emulator/15.0.3/EBF 24170 ESD#4.5/RS6000/AIX 5.3/ase1503/3309/32-bit/DEBUG/Tue May  5 00:47:06 2015
+
+diagxpsb===>
+XP Server/15.0.3/EBF 24170 ESD#4.5/P/RS6000/AIX 5.3/ase1503/2861/64-bit/DEBUG/Thu May  7 01:52:17 2015
+
+isql===>
+CTISQL
+Sybase CTISQL Utility/15.0/P-EBF24109 ESD #31/DRV.15.0.10/RS6000/AIX 5.2/BUILD1500-140/OPT/Mon Apr 13 01:41:15 2015
+
+bcp===>
+Sybase CTBCP Utility/15.0/P-EBF24109 ESD #31/DRV.15.0.10/RS6000/AIX 5.2/BUILD1500-140/OPT/Mon Apr 13 01:41:15 2015
+
+CSI===>

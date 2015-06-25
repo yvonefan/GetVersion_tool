@@ -394,7 +394,7 @@ getUnixVerDetail()
     echo "echo \"dataserver===>\""  >>  $destDir/versionid.sh
     echo "VER=\`strings dataserver | grep EBF | grep Server\`" >>  $destDir/versionid.sh
     echo "echo -e \"\$VER\n\"" >>  $destDir/versionid.sh
-
+    
     echo "echo \"backupserver===>\""  >>  $destDir/versionid.sh
     echo "VER=\`strings backupserver | grep EBF | grep Backup\`" >>  $destDir/versionid.sh
     echo "echo -e \"\$VER\n\"" >>  $destDir/versionid.sh
@@ -415,17 +415,40 @@ getUnixVerDetail()
     echo "VER=\`strings srvbuildres | grep EBF | grep srvbuild\`" >>  $destDir/versionid.sh
     echo "echo -e \"\$VER\n\"" >>  $destDir/versionid.sh
    
-    echo "echo \"sybmigrate===>\""  >>  $destDir/versionid.sh
     if [ $PLAT != "lam" ];then
         echo "BINDIR=/usr/u/huijuanf/GetVersion_tool/bin" >>  $destDir/versionid.sh
         echo "export BINDIR" >>  $destDir/versionid.sh
         echo "source /usr/u/huijuanf/GetVersion_tool/prepare.sh" >>  $destDir/versionid.sh
          
+        echo "echo \"sybmigrate===>\""  >>  $destDir/versionid.sh
         echo """sshCmd $HOST \"source $inst_Dir/SYBASE.csh;cd $inst_Dir/ASE-*/bin;sybmigrate -v | grep -i SybMigrate\" """ >>  $destDir/versionid.sh 
         echo "echo -e \"\n\"" >>  $destDir/versionid.sh
+
+        echo "echo \"sbssav===>\""  >>  $destDir/versionid.sh
+        echo """sshCmd $HOST \"source $inst_Dir/SYBASE.csh;cd $inst_Dir/ASE-*/bin;dataserver --sbssav\" """ >>  $destDir/versionid.sh
+        echo "echo -e \"\n\"" >>  $destDir/versionid.sh
+    
+        echo "echo \"ddlgen===>\""  >>  $destDir/versionid.sh
+        echo """sshCmd $HOST \"source $inst_Dir/SYBASE.csh;cd $inst_Dir/ASE-*/bin;ddlgen -v\" """ >>  $destDir/versionid.sh
+        echo "echo -e \"\n\"" >>  $destDir/versionid.sh
     else
+        echo "echo \"sybmigrate===>\""  >>  $destDir/versionid.sh
         echo "source $inst_Dir/SYBASE.sh >/dev/null 2>&1" >>  $destDir/versionid.sh
         echo "VER=\`sybmigrate -v | grep -i SybMigrate\`" >>  $destDir/versionid.sh
+        echo "echo -e \"\$VER\n\"" >>  $destDir/versionid.sh
+        
+        echo "echo \"sbssav===>\""  >>  $destDir/versionid.sh
+        echo "VER=\`dataserver --sbssav\`" >>  $destDir/versionid.sh
+        echo "echo -e \"\$VER\n\"" >>  $destDir/versionid.sh
+        
+        echo "echo \"ddlgen===>\""  >>  $destDir/versionid.sh
+        echo "VER=\`ddlgen -v\`" >>  $destDir/versionid.sh
+        echo "echo -e \"\$VER\n\"" >>  $destDir/versionid.sh
+    fi
+    echo "$PLAT" >> $destDir/plat    
+    if [ $PLAT == "ibm" ];then      
+        echo "echo \"Libbtsymbols===>\""  >>  $destDir/versionid.sh
+        echo "VER=\`strings $inst_Dir/ASE-*/lib/libbtsymbols.so | grep EBF\`" >>  $destDir/versionid.sh
         echo "echo -e \"\$VER\n\"" >>  $destDir/versionid.sh
     fi
 

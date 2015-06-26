@@ -414,43 +414,6 @@ getUnixVerDetail()
     echo "echo \"srvbuildres===>\""  >>  $destDir/versionid.sh
     echo "VER=\`strings srvbuildres | grep EBF | grep srvbuild\`" >>  $destDir/versionid.sh
     echo "echo -e \"\$VER\n\"" >>  $destDir/versionid.sh
-   
-    if [ $PLAT != "lam" ];then
-        echo "BINDIR=/usr/u/huijuanf/GetVersion_tool/bin" >>  $destDir/versionid.sh
-        echo "export BINDIR" >>  $destDir/versionid.sh
-        echo "source /usr/u/huijuanf/GetVersion_tool/prepare.sh" >>  $destDir/versionid.sh
-         
-        echo "echo \"sybmigrate===>\""  >>  $destDir/versionid.sh
-        echo """sshCmd $HOST \"source $inst_Dir/SYBASE.csh;cd $inst_Dir/ASE-*/bin;sybmigrate -v | grep -i SybMigrate\" """ >>  $destDir/versionid.sh 
-        echo "echo -e \"\n\"" >>  $destDir/versionid.sh
-
-        echo "echo \"sbssav===>\""  >>  $destDir/versionid.sh
-        echo """sshCmd $HOST \"source $inst_Dir/SYBASE.csh;cd $inst_Dir/ASE-*/bin;dataserver --sbssav\" """ >>  $destDir/versionid.sh
-        echo "echo -e \"\n\"" >>  $destDir/versionid.sh
-    
-        echo "echo \"ddlgen===>\""  >>  $destDir/versionid.sh
-        echo """sshCmd $HOST \"source $inst_Dir/SYBASE.csh;cd $inst_Dir/ASE-*/bin;ddlgen -v\" """ >>  $destDir/versionid.sh
-        echo "echo -e \"\n\"" >>  $destDir/versionid.sh
-    else
-        echo "echo \"sybmigrate===>\""  >>  $destDir/versionid.sh
-        echo "source $inst_Dir/SYBASE.sh >/dev/null 2>&1" >>  $destDir/versionid.sh
-        echo "VER=\`sybmigrate -v | grep -i SybMigrate\`" >>  $destDir/versionid.sh
-        echo "echo -e \"\$VER\n\"" >>  $destDir/versionid.sh
-        
-        echo "echo \"sbssav===>\""  >>  $destDir/versionid.sh
-        echo "VER=\`dataserver --sbssav\`" >>  $destDir/versionid.sh
-        echo "echo -e \"\$VER\n\"" >>  $destDir/versionid.sh
-        
-        echo "echo \"ddlgen===>\""  >>  $destDir/versionid.sh
-        echo "VER=\`ddlgen -v\`" >>  $destDir/versionid.sh
-        echo "echo -e \"\$VER\n\"" >>  $destDir/versionid.sh
-    fi
-    echo "$PLAT" >> $destDir/plat    
-    if [ $PLAT == "ibm" ];then      
-        echo "echo \"Libbtsymbols===>\""  >>  $destDir/versionid.sh
-        echo "VER=\`strings $inst_Dir/ASE-*/lib/libbtsymbols.so | grep EBF\`" >>  $destDir/versionid.sh
-        echo "echo -e \"\$VER\n\"" >>  $destDir/versionid.sh
-    fi
 
     echo "echo \"sybmultbufe===>\""  >>  $destDir/versionid.sh
     echo "VER=\`strings sybmultbuf | grep EBF | grep Emulator\`" >>  $destDir/versionid.sh
@@ -500,33 +463,105 @@ getUnixVerDetail()
     echo "    VER=\`strings \$filename | grep CSI | grep '2\.'\`" >>  $destDir/versionid.sh
     echo "    echo -e \"\$VER\n\"" >>  $destDir/versionid.sh
     echo "else" >>  $destDir/versionid.sh
-    echo "    echo -e \"cannot get CSI!\n\""  >>  $destDir/versionid.sh
+    echo "    echo -e \"cannot get CSI!Please get it manually!\n\""  >>  $destDir/versionid.sh
     echo "fi" >>  $destDir/versionid.sh
-
-    echo "echo \"scc.sh===>\""  >>  $destDir/versionid.sh
-    if [ ! -f $inst_Dir/SCC-*/bin/scc.sh ];then
-         echo "echo -e \"cannot get scc.sh!\n\""  >>  $destDir/versionid.sh
-         return 1
-    fi
     
-    subfilepath=`ls -t $inst_Dir/shared |grep JRE | grep -m 1 '.'`
     if [ $PLAT != "lam" ];then
         rm $destDir/testbash.sh
-        echo "subfilepath=$subfilepath" >>  $destDir/testbash.sh
-        echo "source $inst_Dir/SYBASE.sh;
-              SCC_JAVA_HOME=$inst_Dir/shared/\$subfilepath;
-              export SCC_JAVA_HOME;
-              cd $inst_Dir/SCC-*/bin;
-              VER=\`scc.sh -v |grep Server\`;
-              echo \"\$VER\"" >>  $destDir/testbash.sh
-        echo "sshCmd $HOST \"sh $destDir/testbash.sh\"" >> $destDir/versionid.sh
-        #echo "rm $destDir/testbash.sh" >>  $destDir/versionid.sh
+		echo "BINDIR=/usr/u/huijuanf/GetVersion_tool/bin" >>  $destDir/versionid.sh
+        echo "export BINDIR" >>  $destDir/versionid.sh
+        echo "source /usr/u/huijuanf/GetVersion_tool/prepare.sh" >>  $destDir/versionid.sh
+		echo ". $inst_Dir/SYBASE.sh" >>  $destDir/testbash.sh
+		
+		if [ ! -f $inst_Dir/ASE-*/bin/sybmigrate ];then
+			echo "echo \"sybmigrate===>\""  >>  $destDir/versionid.sh
+			echo "echo \"cannot get sybmigrate!Please get it manually!\""  >>  $destDir/versionid.sh
+            echo "echo \" \""  >>  $destDir/versionid.sh
+		else
+			echo "echo \"sybmigrate===>\""  >>  $destDir/testbash.sh
+			echo "VER=\`sybmigrate -v | grep -i SybMigrate\`;echo \"\$VER\"" >>  $destDir/testbash.sh
+            echo "echo \" \""  >>  $destDir/testbash.sh
+        fi
+
+		if [ ! -f $inst_Dir/ASE-*/bin/dataserver ];then
+			echo "echo \"sbssav===>\""  >>  $destDir/versionid.sh
+			echo "echo \"cannot get sbssav!Please get it manually!\""  >>  $destDir/versionid.sh
+            echo "echo \" \""  >>  $destDir/versionid.sh
+		else
+			echo "echo \"sbssav===>\""  >>  $destDir/testbash.sh
+			echo "cd $inst_Dir/ASE-*/bin;VER=\`dataserver --sbssav\`;echo \"\$VER\"" >>  $destDir/testbash.sh
+            echo "echo \" \""  >>  $destDir/testbash.sh
+        fi
+			
+		if [ ! -f $inst_Dir/ASE-*/bin/ddlgen ];then
+			echo "echo \"ddlgen===>\""  >>  $destDir/versionid.sh
+			echo "echo \"cannot get ddlgen!Please get it manually!\""  >>  $destDir/versionid.sh
+            echo "echo \" \""  >>  $destDir/versionid.sh
+		else
+			echo "echo \"ddlgen===>\""  >>  $destDir/testbash.sh
+			echo "cd $inst_Dir/ASE-*/bin;VER=\`ddlgen -v |grep Server\`;echo \"\$VER\"" >>  $destDir/testbash.sh
+            echo "echo \" \""  >>  $destDir/testbash.sh
+        fi			
+		if [ ! -f $inst_Dir/SCC-*/bin/scc.sh ];then
+		     echo "echo \"scc.sh===>\""  >>  $destDir/versionid.sh
+			 echo "echo \"cannot get scc.sh!Please get it manually!\""  >>  $destDir/versionid.sh
+             echo "echo \" \""  >>  $destDir/versionid.sh
+		else
+			subfilepath=`ls -t $inst_Dir/shared |grep JRE | grep -m 1 '.'`
+		    echo "echo \"scc.sh===>\""  >>  $destDir/testbash.sh
+			echo "subfilepath=$subfilepath" >>  $destDir/testbash.sh
+			echo "SCC_JAVA_HOME=$inst_Dir/shared/\$subfilepath;
+				  export SCC_JAVA_HOME;
+				  cd $inst_Dir/SCC-*/bin;
+				  VER=\`scc.sh -v |grep Server\`;
+				  echo \"\$VER\"" >>  $destDir/testbash.sh
+        fi
+				  
+		if [ $PLAT == "ibm" ];then      
+			echo "echo \"Libbtsymbols===>\""  >>  $destDir/versionid.sh
+			if [ ! -f $inst_Dir/ASE-*/lib/libbtsymbols.so ];then
+				echo "echo \"cannot get Libbtsymbols!Please get it manually!\""  >>  $destDir/versionid.sh
+                echo "echo \" \""  >>  $destDir/versionid.sh
+			else
+				echo "VER=\`strings $inst_Dir/ASE-*/lib/libbtsymbols.so | grep EBF\`" >>  $destDir/versionid.sh
+				echo "echo \"\$VER\"" >>  $destDir/versionid.sh
+                echo "echo \" \""  >>  $destDir/versionid.sh
+			fi
+		fi
+		
+		if [ -f $destDir/testbash.sh ];then
+			echo "sshCmd $HOST \"sh $destDir/testbash.sh\"" >> $destDir/versionid.sh
+		fi
     else
-        echo "SCC_JAVA_HOME=$inst_Dir/shared/$subfilepath" >> $destDir/versionid.sh
-        echo "export SCC_JAVA_HOME" >> $destDir/versionid.sh
-        echo "cd $inst_Dir/SCC-*/bin" >>  $destDir/versionid.sh
-        echo "VER=\`scc.sh -v |grep Server\`" >>  $destDir/versionid.sh
-        echo "echo -e \"\$VER\n\"" >>  $destDir/versionid.sh
+		echo "echo \"sybmigrate===>\""  >>  $destDir/versionid.sh
+        echo "source $inst_Dir/SYBASE.sh >/dev/null 2>&1" >>  $destDir/versionid.sh
+        echo "VER=\`sybmigrate -v | grep -i SybMigrate\`" >>  $destDir/versionid.sh
+        echo "echo \"\$VER\"" >>  $destDir/versionid.sh
+        echo "echo \" \""  >>  $destDir/versionid.sh
+        
+        echo "echo \"sbssav===>\""  >>  $destDir/versionid.sh
+        echo "VER=\`dataserver --sbssav\`" >>  $destDir/versionid.sh
+        echo "echo \"\$VER\"" >>  $destDir/versionid.sh
+        echo "echo \" \""  >>  $destDir/versionid.sh
+        
+        echo "echo \"ddlgen===>\""  >>  $destDir/versionid.sh
+        echo "VER=\`ddlgen -v |grep Server\`" >>  $destDir/versionid.sh
+        echo "echo \"\$VER\"" >>  $destDir/versionid.sh
+        echo "echo \" \""  >>  $destDir/versionid.sh
+		
+		if [ ! -f $inst_Dir/SCC-*/bin/scc.sh ];then
+		     echo "echo \"scc.sh===>\""  >>  $destDir/versionid.sh
+			 echo "echo \"cannot get scc.sh!Please get it manually!\""  >>  $destDir/versionid.sh
+             echo "echo \" \""  >>  $destDir/versionid.sh
+		else
+			subfilepath=`ls -t $inst_Dir/shared |grep JRE | grep -m 1 '.'`
+			echo "SCC_JAVA_HOME=$inst_Dir/shared/$subfilepath" >> $destDir/versionid.sh
+			echo "export SCC_JAVA_HOME" >> $destDir/versionid.sh
+			echo "cd $inst_Dir/SCC-*/bin" >>  $destDir/versionid.sh
+			echo "VER=\`scc.sh -v |grep Server\`" >>  $destDir/versionid.sh
+			echo "echo \"\$VER\"" >>  $destDir/versionid.sh
+            echo "echo \" \""  >>  $destDir/versionid.sh
+		fi
     fi
 }
 
@@ -554,18 +589,22 @@ getNTVersionDetails()
     echo "cd bin" >>  $rmtwkDIR/versionid.sh
     echo "echo \"sqlsrvr.exe===>\""  >>  $rmtwkDIR/versionid.sh
     echo "VER=\`sqlsrvr.exe -v | grep EBF | grep Server\`" >>  $rmtwkDIR/versionid.sh
-    echo "echo -e \"\$VER\n\"" >>  $rmtwkDIR/versionid.sh
+    echo "echo \"\$VER\"" >>  $rmtwkDIR/versionid.sh
+    echo "echo \" \""  >>  $rmtwkDIR/versionid.sh
 
     echo "echo \"bcksrvr.exe===>\""  >>  $rmtwkDIR/versionid.sh
     echo "VER=\`bcksrvr.exe -v | grep EBF | grep Backup\`" >>  $rmtwkDIR/versionid.sh
-    echo "echo -e \"\$VER\n\"" >>  $rmtwkDIR/versionid.sh
+    echo "echo \"\$VER\"" >>  $rmtwkDIR/versionid.sh
+    echo "echo \" \""  >>  $rmtwkDIR/versionid.sh
     echo "echo \"charset.exe===>\""  >>  $rmtwkDIR/versionid.sh
     echo "VER=\`charset.exe -v | grep EBF | grep Charset\`" >>  $rmtwkDIR/versionid.sh
-    echo "echo -e \"\$VER\n\"" >>  $rmtwkDIR/versionid.sh
-    
+    echo "echo \"\$VER\"" >>  $rmtwkDIR/versionid.sh
+    echo "echo \" \""  >>  $rmtwkDIR/versionid.sh
+
     echo "echo \"langinst.exe===>\""  >>  $rmtwkDIR/versionid.sh
     echo "VER=\`langinst.exe -v | grep EBF | grep  Langinstall\`" >>  $rmtwkDIR/versionid.sh
-    echo "echo -e \"\$VER\n\"" >>  $rmtwkDIR/versionid.sh
+    echo "echo \"\$VER\"" >>  $rmtwkDIR/versionid.sh
+    echo "echo \" \""  >>  $rmtwkDIR/versionid.sh
    # echo "VER=\`sybatch.exe -v | grep EBF | grep SyBatch\`" >>  $rmtwkDIR/versionid.sh
     #echo "echo \"\$VER\"" >>  $rmtwkDIR/versionid.sh
     
@@ -575,35 +614,43 @@ getNTVersionDetails()
 
     echo "echo \"sybmbuf.exe===>\""  >>  $rmtwkDIR/versionid.sh
     echo "VER=\`sybmbuf.exe -v | grep EBF | grep Emulator\`" >>  $rmtwkDIR/versionid.sh
-    echo "echo -e \"\$VER\n\"" >>  $rmtwkDIR/versionid.sh
+    echo "echo \"\$VER\"" >>  $rmtwkDIR/versionid.sh
+    echo "echo \" \""  >>  $rmtwkDIR/versionid.sh
 
     echo "echo \"xpserver.exe===>\""  >>  $rmtwkDIR/versionid.sh
     echo "VER=\`xpserver.exe -v | grep EBF | grep XP\`" >>  $rmtwkDIR/versionid.sh
-    echo "echo -e \"\$VER\n\"" >>  $rmtwkDIR/versionid.sh
+    echo "echo \"\$VER\"" >>  $rmtwkDIR/versionid.sh
+    echo "echo \" \""  >>  $rmtwkDIR/versionid.sh
 
     echo "echo \"diagbs.exe===>\""  >>  $rmtwkDIR/versionid.sh
     echo "VER=\`diagbs.exe -v | grep EBF | grep Backup\`" >>  $rmtwkDIR/versionid.sh
-    echo "echo -e \"\$VER\n\"" >>  $rmtwkDIR/versionid.sh
+    echo "echo \"\$VER\"" >>  $rmtwkDIR/versionid.sh
+    echo "echo \" \""  >>  $rmtwkDIR/versionid.sh
 
     echo "echo \"diagjsag.exe===>\""  >>  $rmtwkDIR/versionid.sh
     echo "VER=\`diagjsag.exe -v | grep EBF | grep JS\`" >>  $rmtwkDIR/versionid.sh
-    echo "echo -e \"\$VER\n\"" >>  $rmtwkDIR/versionid.sh
+    echo "echo \"\$VER\"" >>  $rmtwkDIR/versionid.sh
+    echo "echo \" \""  >>  $rmtwkDIR/versionid.sh
 
     echo "echo \"diagoptd.exe===>\""  >>  $rmtwkDIR/versionid.sh
     echo "VER=\`diagoptd.exe -v | grep EBF | grep OptDiag\`" >>  $rmtwkDIR/versionid.sh
-    echo "echo -e \"\$VER\n\"" >>  $rmtwkDIR/versionid.sh
+    echo "echo \"\$VER\"" >>  $rmtwkDIR/versionid.sh
+    echo "echo \" \""  >>  $rmtwkDIR/versionid.sh
 
     echo "echo \"diagsrvr.exe===>\""  >>  $rmtwkDIR/versionid.sh
     echo "VER=\`diagsrvr.exe -v | grep EBF | grep Server\`" >>  $rmtwkDIR/versionid.sh
-    echo "echo -e \"\$VER\n\"" >>  $rmtwkDIR/versionid.sh
+    echo "echo \"\$VER\"" >>  $rmtwkDIR/versionid.sh
+    echo "echo \" \""  >>  $rmtwkDIR/versionid.sh
 
     echo "echo \"diagsmb.exe===>\""  >>  $rmtwkDIR/versionid.sh
     echo "VER=\`diagsmb.exe -v | grep EBF\`" >>  $rmtwkDIR/versionid.sh
-    echo "echo -e \"\$VER\n\"" >>  $rmtwkDIR/versionid.sh
+    echo "echo \"\$VER\"" >>  $rmtwkDIR/versionid.sh
+    echo "echo \" \""  >>  $rmtwkDIR/versionid.sh
 
     echo "echo \"diagxps.exe===>\""  >>  $rmtwkDIR/versionid.sh
     echo "VER=\`diagxps.exe -v | grep EBF | grep XP\`" >>  $rmtwkDIR/versionid.sh
-    echo "echo -e \"\$VER\n\"" >>  $rmtwkDIR/versionid.sh
+    echo "echo \"\$VER\"" >>  $rmtwkDIR/versionid.sh
+    echo "echo \" \""  >>  $rmtwkDIR/versionid.sh
 
     #echo "VER=\`strings libsybct64.dll | grep EBF\`" >>  $rmtwkDIR/versionid.sh
     #echo "echo \"\$VER\"" >>  $rmtwkDIR/versionid.sh
@@ -614,12 +661,13 @@ getNTVersionDetails()
     echo "cd $rmtwkDIR/OCS-*/bin" >>  $rmtwkDIR/versionid.sh
     echo "echo \"isql.exe===>\""  >>  $rmtwkDIR/versionid.sh
     echo "VER=\`isql.exe -v | grep EBF | grep CTISQL\`" >>  $rmtwkDIR/versionid.sh
-    echo "echo -e \"\$VER\n\"" >>  $rmtwkDIR/versionid.sh
+    echo "echo \"\$VER\"" >>  $rmtwkDIR/versionid.sh
+    echo "echo \" \""  >>  $rmtwkDIR/versionid.sh
 
     echo "echo \"bcp.exe===>\""  >>  $rmtwkDIR/versionid.sh
     echo "VER=\`bcp.exe -v | grep CTBCP\`" >>  $rmtwkDIR/versionid.sh
-    echo "echo -e \"\$VER\n\"" >>  $rmtwkDIR/versionid.sh
-
+    echo "echo \"\$VER\"" >>  $rmtwkDIR/versionid.sh
+    echo "echo \" \""  >>  $rmtwkDIR/versionid.sh
 #    if [ "$PLAT" = "nt32" -o "$PLAT" = "nt386" ];then
 #        echo "cd $rmtwkDIR/OCS-*/lib3p" >>  $rmtwkDIR/versionid.sh
 #        echo "filename=\`ls -t syb*csi*core* | grep -m 1 '.'\`" >>  $rmtwkDIR/versionid.sh
@@ -635,7 +683,7 @@ getNTVersionDetails()
     #echo "cd $rmtwkDIR/SCC-*/bin" >>  $rmtwkDIR/versionid.sh
     #echo "echo \"scc.bat===>\""  >>  $rmtwkDIR/versionid.sh
     #echo "VER=\`scc.bat -v |grep Server\`" >>  $rmtwkDIR/versionid.sh
-    #echo "echo -e \"\$VER\n\"" >>  $rmtwkDIR/versionid.sh
+    #echo "echo \"\$VER\n\"" >>  $rmtwkDIR/versionid.sh
 }
 
 #################################################################################################
@@ -742,3 +790,4 @@ sendMail()
     cat $filename | $EMAIL_CMD -s "$mail_title" $username@sybase.com
 
 }
+

@@ -455,8 +455,12 @@ getUnixVerDetail()
     echo "echo \"bcp===>\""  >>  $destDir/versionid.sh
     echo "VER=\`strings bcp | grep CTBCP\`" >>  $destDir/versionid.sh
     echo "echo -e \"\$VER\n\"" >>  $destDir/versionid.sh
-
-    echo "cd $inst_Dir/OCS-*/lib3p64" >>  $destDir/versionid.sh
+    
+    if [ "$PLAT" = "linux32" -o "$PLAT" = "sunsparc32" ];then
+        echo "cd $inst_Dir/OCS-*/lib3p" >>  $destDir/versionid.sh
+    else
+        echo "cd $inst_Dir/OCS-*/lib3p64" >>  $destDir/versionid.sh
+    fi
     echo "echo \"CSI===>\""  >>  $destDir/versionid.sh
     echo "filename=\`ls -t *syb*csi*core* | grep -m 1 '.'\`" >>  $destDir/versionid.sh
     echo "if [ ! -z $filename ];then"  >>  $destDir/versionid.sh

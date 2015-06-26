@@ -32,7 +32,9 @@ hpia | Hpia | HPIA | hpia64
 ibm | i51 | aix | ibmaix64
 lps | ibmplinux64 | ibmplinux
 lam | linuxamd64 | linuxamd
+linux32
 sol | sunsparc64 | sunsparc
+sunsparc32
 solam | sunx64
 nt32 | nt386
 nt64 | winx64
@@ -134,8 +136,14 @@ case $instPlat in
     lam | linuxamd64 | linuxamd)
         PLAT="lam"
         ;;
+    linux32)
+        PLAT="linux32"
+        ;;
     sol | sunsparc64 | sunsparc)
         PLAT="sol"
+        ;;
+    sunsparc32)
+        PLAT="sunsparc32"
         ;;
     solam | sunx64)
         PLAT="solam"

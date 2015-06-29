@@ -462,14 +462,40 @@ getUnixVerDetail()
         echo "cd $inst_Dir/OCS-*/lib3p64" >>  $destDir/versionid.sh
     fi
     echo "echo \"CSI===>\""  >>  $destDir/versionid.sh
-    echo "filename=\`ls -t *syb*csi*core* | grep -m 1 '.'\`" >>  $destDir/versionid.sh
-    echo "if [ ! -z $filename ];then"  >>  $destDir/versionid.sh
-    echo "    VER=\`strings \$filename | grep CSI | grep '2\.'\`" >>  $destDir/versionid.sh
+    echo "csi_file=\`ls -t *syb*csi*core* | grep -m 1 '.'\`" >>  $destDir/versionid.sh
+    echo "if [ ! -z \$csi_file ];then"  >>  $destDir/versionid.sh
+    echo "    VER=\`strings \$csi_file | grep CSI | grep '2\.'\`" >>  $destDir/versionid.sh
     echo "    echo -e \"\$VER\n\"" >>  $destDir/versionid.sh
     echo "else" >>  $destDir/versionid.sh
     echo "    echo -e \"cannot get CSI!Please get it manually!\n\""  >>  $destDir/versionid.sh
     echo "fi" >>  $destDir/versionid.sh
-    
+
+    echo "cd $inst_Dir/ASE-*/symlib" >>  $destDir/versionid.sh
+    echo "echo \"repserver CI libraries===>\""  >>  $destDir/versionid.sh
+    echo "repCI_file=\`ls -t *syb*ci*.so | grep -m 1 '.'\`" >>  $destDir/versionid.sh
+    echo "if [ ! -z \$repCI_file ];then
+    VER=\`strings \$repCI_file | grep EBF\`
+    echo -e \"\$VER\n\"
+else
+    echo -e \"cannot get repserver CI libraries!Please get it manually!\n\"
+fi" >>  $destDir/versionid.sh
+
+    echo "echo \"jConnect/jutils===>\""  >>  $destDir/versionid.sh   
+    echo "if [ -f $inst_Dir/jConnect-*/version.txt ];then
+    VER=\`cat $inst_Dir/jConnect-*/version.txt\`
+    echo -e \"\$VER\n\"
+else
+    echo -e \"cannot get jConnect/jutils!Please get it manually!\n\"
+fi" >>  $destDir/versionid.sh
+
+    echo "echo \"drivers===>\""  >>  $destDir/versionid.sh
+    echo "if [ -f $inst_Dir/DataAccess*/ODBC/lib/libsybdrvodb-sqllen4.so ];then
+    VER=\`strings $inst_Dir/DataAccess*/ODBC/lib/libsybdrvodb-sqllen4.so |grep SQLLEN4\`
+    echo -e \"\$VER\n\"
+else
+    echo -e \"cannot get drivers!Please get it manually!\n\"
+fi" >>  $destDir/versionid.sh
+
     if [ $PLAT != "lam" ];then
         rm $destDir/testbash.sh
 		echo "BINDIR=/usr/u/huijuanf/GetVersion_tool/bin" >>  $destDir/versionid.sh
@@ -520,7 +546,38 @@ getUnixVerDetail()
 				  VER=\`scc.sh -v |grep Server\`;
 				  echo \"\$VER\"" >>  $destDir/testbash.sh
         fi
-				  
+
+        if [ ! -f $inst_Dir/DBISQL*/bin/dbisql ];then
+            echo "echo \"DBISQL===>\""  >>  $destDir/versionid.sh
+            echo "echo \"cannot get DBISQL!Please get it manually!\""  >>  $destDir/versionid.sh
+            echo "echo \" \""  >>  $destDir/versionid.sh
+        else
+            echo "echo \"DBISQL===>\""  >>  $destDir/testbash.sh
+            echo "cd $inst_Dir/DBISQL*/bin;VER=\`./dbisql -nogui -version\`;echo \"\$VER\"" >>  $destDir/testbash.sh
+            echo "echo \" \""  >>  $destDir/testbash.sh
+        fi
+ 
+	    if [ ! -f $inst_Dir/ASE-*/bin/sybrestore ];then
+            echo "echo \"sybrestore===>\""  >>  $destDir/versionid.sh
+            echo "echo \"cannot get sybrestore!Please get it manually!\""  >>  $destDir/versionid.sh
+            echo "echo \" \""  >>  $destDir/versionid.sh
+        else
+            echo "echo \"sybrestore===>\""  >>  $destDir/testbash.sh
+            echo "cd $inst_Dir/ASE-*/bin;VER=\`sybrestore -v\`;echo \"\$VER\"" >>  $destDir/testbash.sh
+            echo "echo \" \""  >>  $destDir/testbash.sh
+        fi
+
+        if [ ! -f $inst_Dir/ASE-*/bin/sybdiag ];then
+            echo "echo \"sybdiag===>\""  >>  $destDir/versionid.sh
+            echo "echo \"cannot get sybdiag!Please get it manually!\""  >>  $destDir/versionid.sh
+            echo "echo \" \""  >>  $destDir/versionid.sh
+        else
+            echo "echo \"sybdiag===>\""  >>  $destDir/testbash.sh
+            echo "cd $inst_Dir/ASE-*/bin;VER=\`sybdiag -v\`;echo \"\$VER\"" >>  $destDir/testbash.sh
+            echo "echo \" \""  >>  $destDir/testbash.sh
+        fi
+
+		  
 		if [ $PLAT == "ibm" ];then      
 			echo "echo \"Libbtsymbols===>\""  >>  $destDir/versionid.sh
 			if [ ! -f $inst_Dir/ASE-*/lib/libbtsymbols.so ];then
@@ -553,8 +610,8 @@ getUnixVerDetail()
         echo "echo \"\$VER\"" >>  $destDir/versionid.sh
         echo "echo \" \""  >>  $destDir/versionid.sh
 		
+		echo "echo \"scc.sh===>\""  >>  $destDir/versionid.sh
 		if [ ! -f $inst_Dir/SCC-*/bin/scc.sh ];then
-		     echo "echo \"scc.sh===>\""  >>  $destDir/versionid.sh
 			 echo "echo \"cannot get scc.sh!Please get it manually!\""  >>  $destDir/versionid.sh
              echo "echo \" \""  >>  $destDir/versionid.sh
 		else
@@ -566,6 +623,37 @@ getUnixVerDetail()
 			echo "echo \"\$VER\"" >>  $destDir/versionid.sh
             echo "echo \" \""  >>  $destDir/versionid.sh
 		fi
+    
+        if [ ! -f $inst_Dir/DBISQL*/bin/dbisql ];then
+            echo "echo \"DBISQL===>\""  >>  $destDir/versionid.sh
+            echo "echo \"cannot get DBISQL!Please get it manually!\""  >>  $destDir/versionid.sh
+            echo "echo \" \""  >>  $destDir/versionid.sh
+        else
+            echo "echo \"DBISQL===>\""  >>  $destDir/versionid.sh
+            echo "cd $inst_Dir/DBISQL*/bin;VER=\`./dbisql -nogui -version\`;echo \"\$VER\"" >>  $destDir/versionid.sh
+            echo "echo \" \""  >>  $destDir/versionid.sh
+        fi
+      
+        if [ ! -f $inst_Dir/ASE-*/bin/sybrestore ];then
+            echo "echo \"sybrestore===>\""  >>  $destDir/versionid.sh
+            echo "echo \"cannot get sybrestore!Please get it manually!\""  >>  $destDir/versionid.sh
+            echo "echo \" \""  >>  $destDir/versionid.sh
+        else
+            echo "echo \"sybrestore===>\""  >>  $destDir/versionid.sh
+            echo "cd $inst_Dir/ASE-*/bin;VER=\`sybrestore -v\`;echo \"\$VER\"" >>  $destDir/versionid.sh
+            echo "echo \" \""  >>  $destDir/versionid.sh
+        fi
+
+        if [ ! -f $inst_Dir/ASE-*/bin/sybdiag ];then
+            echo "echo \"sybdiag===>\""  >>  $destDir/versionid.sh
+            echo "echo \"cannot get sybdiag!Please get it manually!\""  >>  $destDir/versionid.sh
+            echo "echo \" \""  >>  $destDir/versionid.sh
+        else
+            echo "echo \"sybdiag===>\""  >>  $destDir/versionid.sh
+            echo "cd $inst_Dir/ASE-*/bin;VER=\`sybdiag -v\`;echo \"\$VER\"" >>  $destDir/versionid.sh
+            echo "echo \" \""  >>  $destDir/versionid.sh
+        fi
+
     fi
 }
 
@@ -658,8 +746,8 @@ getNTVersionDetails()
 
     #echo "VER=\`strings libsybct64.dll | grep EBF\`" >>  $rmtwkDIR/versionid.sh
     #echo "echo \"\$VER\"" >>  $rmtwkDIR/versionid.sh
-    #echo "filename=\`ls -t *syb*csi*core* | grep -m 1 '.'\`" >>  $rmtwkDIR/versionid.sh
-    #echo "VER=\`strings \$filename | grep CSI | grep '2\.'\`" >>  $rmtwkDIR/versionid.sh
+    #echo "csi_file=\`ls -t *syb*csi*core* | grep -m 1 '.'\`" >>  $rmtwkDIR/versionid.sh
+    #echo "VER=\`strings \$csi_file | grep CSI | grep '2\.'\`" >>  $rmtwkDIR/versionid.sh
     #echo "echo \"\$VER\"" >>  $rmtwkDIR/versionid.sh
 
     echo "cd $rmtwkDIR/OCS-*/bin" >>  $rmtwkDIR/versionid.sh

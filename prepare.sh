@@ -389,7 +389,12 @@ getUnixVerDetail()
     echo "echo \"--------------------\""  >>  $destDir/versionid.sh
     echo "echo \"Version string:\""  >>  $destDir/versionid.sh
     echo "echo \"===\""  >>  $destDir/versionid.sh
-    echo "source $inst_Dir/SYBASE.sh >/dev/null 2>&1" >>  $destDir/versionid.sh
+    if [ -f $inst_Dir/SYBASE.sh ];then
+        echo "source $inst_Dir/SYBASE.sh >/dev/null 2>&1" >>  $destDir/versionid.sh
+    else
+        echo "There is no SYBASE.sh in $inst_Dir;Cannot get version string"
+        exit
+    fi
     echo "cd $inst_Dir/ASE-*/bin" >>  $destDir/versionid.sh
     echo "echo \"dataserver===>\""  >>  $destDir/versionid.sh
     echo "VER=\`strings dataserver | grep EBF | grep Server\`" >>  $destDir/versionid.sh
@@ -595,7 +600,13 @@ fi" >>  $destDir/versionid.sh
 		fi
     else
 		echo "echo \"sybmigrate===>\""  >>  $destDir/versionid.sh
-        echo "source $inst_Dir/SYBASE.sh >/dev/null 2>&1" >>  $destDir/versionid.sh
+        if [ -f $inst_Dir/SYBASE.sh ];then
+            echo "source $inst_Dir/SYBASE.sh >/dev/null 2>&1" >>  $destDir/versionid.sh
+        else
+            echo "There is no SYBASE.sh in $inst_Dir;Cannot get version string!"
+            exit
+        fi
+
         echo "VER=\`sybmigrate -v | grep -i SybMigrate\`" >>  $destDir/versionid.sh
         echo "echo \"\$VER\"" >>  $destDir/versionid.sh
         echo "echo \" \""  >>  $destDir/versionid.sh
